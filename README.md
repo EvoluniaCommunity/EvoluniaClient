@@ -1,4 +1,4 @@
-# OTClientV8
+# Evolunia's OTClientV8 Fork
 
 OTClientV8 is highly optimized, cross-platform tile based 2d game engine built with c++17, lua, physfs, OpenGL ES 2.0 and OpenAL.
 It has been created as alternative client for game called [Tibia](https://tibia.com/), but now it's much more functional and powerful.
