@@ -1,0 +1,10 @@
+Module
+  name: game_luniabot
+  description: Basic bot module
+  author: Lunia
+  website: www.otclient.info
+  sandboxed: true 
+  autoload: true
+  scripts: [ luniabot.lua ]
+  @onLoad: init()
+  @onUnload: terminate()

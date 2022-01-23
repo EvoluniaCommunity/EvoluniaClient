@@ -88,7 +88,6 @@ context.findAllPaths = function(start, maxDist, params)
       ignoreCost
       allowUnseen
       allowOnlyVisibleTiles
-      maxDistanceFrom
   ]]--
   if type(params) ~= 'table' then
     params = {}
@@ -98,15 +97,6 @@ context.findAllPaths = function(start, maxDist, params)
       params[key] = 0
     elseif value == true then
       params[key] = 1    
-    end
-  end
-  if type(params['maxDistanceFrom']) == 'table' then
-    if #params['maxDistanceFrom'] == 2 then
-      params['maxDistanceFrom'] = params['maxDistanceFrom'][1].x .. "," .. params['maxDistanceFrom'][1].y ..
-        "," .. params['maxDistanceFrom'][1].z .. "," .. params['maxDistanceFrom'][2]
-    elseif #params['maxDistanceFrom'] == 4 then
-      params['maxDistanceFrom'] = params['maxDistanceFrom'][1] .. "," .. params['maxDistanceFrom'][2] ..
-        "," .. params['maxDistanceFrom'][3] .. "," .. params['maxDistanceFrom'][4]
     end
   end
   return g_map.findEveryPath(start, maxDist, params)
@@ -155,7 +145,6 @@ context.findPath = function(startPos, destPos, maxDist, params)
       precision
       marginMin
       marginMax
-      maxDistanceFrom
   ]]--
   if not destPos or startPos.z ~= destPos.z then
     return
@@ -249,19 +238,4 @@ context.canShoot = function(pos, distance)
     return tile:canShoot(distance)
   end
   return false
-end
-
-context.isTrapped = function(creature)
-  if not creature then
-    creature = context.player
-  end
-  local pos = creature:getPosition()
-  local dirs = {{-1,1}, {0,1}, {1,1}, {-1, 0}, {1, 0}, {-1, -1}, {0, -1}, {1, -1}}
-  for i=1,#dirs do
-    local tile = g_map.getTile({x=pos.x-dirs[i][1],y=pos.y-dirs[i][2],z=pos.z})
-    if tile and tile:isWalkable(false) then
-      return false
-    end
-  end
-  return true
 end

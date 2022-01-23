@@ -10,7 +10,7 @@ function executeBot(config, storage, tabs, msgCallback, saveConfigCallback, relo
     end
     if ext[#ext]:lower() == "ui" or ext[#ext]:lower() == "otui" then
       table.insert(uiFiles, file)
-    end
+    end    
   end
   
   if #luaFiles == 0 then
@@ -42,7 +42,6 @@ function executeBot(config, storage, tabs, msgCallback, saveConfigCallback, relo
     onKeyPress = {},
     onTalk = {},
     onTextMessage = {},
-    onLoginAdvice = {},
     onAddThing = {},
     onRemoveThing = {},
     onCreatureAppear = {},
@@ -61,18 +60,7 @@ function executeBot(config, storage, tabs, msgCallback, saveConfigCallback, relo
     onOpenChannel = {},
     onCloseChannel = {},
     onChannelEvent = {},
-    onTurn = {},
-    onWalk = {},
-    onImbuementWindow = {},
-    onModalDialog = {},
-    onAttackingCreatureChange = {},
-    onManaChange = {},
-    onStatesChange = {},
-    onAddItem = {},
-    onGameEditText = {},
-    onGroupSpellCooldown = {},
-    onSpellCooldown = {},
-    onRemoveItem = {}
+    onTurn = {}
   }
   
   -- basic functions & classes
@@ -82,18 +70,10 @@ function executeBot(config, storage, tabs, msgCallback, saveConfigCallback, relo
   context.tostring = tostring
   context.math = math
   context.table = table
-  context.setmetatable = setmetatable
   context.string = string
   context.tonumber = tonumber
   context.type = type
   context.pcall = pcall
-  context.os = {
-    time = os.time,
-    date = os.date,
-    difftime = os.difftime,
-    date = os.date,
-    clock = os.clock
-  }
   context.load = function(str) return assert(load(str, nil, nil, context)) end
   context.loadstring = context.load
   context.assert = assert
@@ -244,19 +224,9 @@ function executeBot(config, storage, tabs, msgCallback, saveConfigCallback, relo
           callback(name, level, mode, text, channelId, pos)
         end
       end,
-      onImbuementWindow = function(itemId, slots, activeSlots, imbuements, needItems)
-        for i, callback in ipairs(context._callbacks.onImbuementWindow) do
-          callback(itemId, slots, activeSlots, imbuements, needItems)
-        end
-      end,
       onTextMessage = function(mode, text)
         for i, callback in ipairs(context._callbacks.onTextMessage) do
           callback(mode, text)
-        end
-      end,
-      onLoginAdvice = function(message)
-        for i, callback in ipairs(context._callbacks.onLoginAdvice) do
-          callback(message)
         end
       end,      
       onAddThing = function(tile, thing)
@@ -309,9 +279,9 @@ function executeBot(config, storage, tabs, msgCallback, saveConfigCallback, relo
           callback(container)
         end
       end,
-      onContainerUpdateItem = function(container, slot, item, oldItem)
+      onContainerUpdateItem = function(container, slot, item)
         for i, callback in ipairs(context._callbacks.onContainerUpdateItem) do
-          callback(container, slot, item, oldItem)
+          callback(container, slot, item)
         end
       end,
       onMissle = function(missle)
@@ -353,56 +323,6 @@ function executeBot(config, storage, tabs, msgCallback, saveConfigCallback, relo
         for i, callback in ipairs(context._callbacks.onTurn) do
           callback(creature, direction)
         end      
-      end,
-      onWalk = function(creature, oldPos, newPos)
-        for i, callback in ipairs(context._callbacks.onWalk) do
-          callback(creature, oldPos, newPos)
-        end      
-      end,
-      onModalDialog = function(id, title, message, buttons, enterButton, escapeButton, choices, priority)
-        for i, callback in ipairs(context._callbacks.onModalDialog) do
-          callback(id, title, message, buttons, enterButton, escapeButton, choices, priority)
-        end
-      end,
-      onGameEditText = function(id, itemId, maxLength, text, writer, time)
-        for i, callback in ipairs(context._callbacks.onGameEditText) do
-          callback(id, itemId, maxLength, text, writer, time)
-        end
-      end,
-      onAttackingCreatureChange = function(creature, oldCreature)
-        for i, callback in ipairs(context._callbacks.onAttackingCreatureChange) do
-          callback(creature, oldCreature)
-        end
-      end,
-      onManaChange = function(player, mana, maxMana, oldMana, oldMaxMana)
-        for i, callback in ipairs(context._callbacks.onManaChange) do
-          callback(player, mana, maxMana, oldMana, oldMaxMana)
-        end
-      end,
-      onAddItem = function(container, slot, item)
-        for i, callback in ipairs(context._callbacks.onAddItem) do
-          callback(container, slot, item)
-        end
-      end,
-      onRemoveItem = function(container, slot, item)
-        for i, callback in ipairs(context._callbacks.onRemoveItem) do
-          callback(container, slot, item)
-        end
-      end,
-      onStatesChange = function(states, oldStates)
-        for i, callback in ipairs(context._callbacks.onStatesChange) do
-          callback(states, oldStates)
-        end
-      end,
-      onGroupSpellCooldown = function(iconId, duration)
-        for i, callback in ipairs(context._callbacks.onGroupSpellCooldown) do
-          callback(iconId, duration)
-        end
-      end,
-      onSpellCooldown = function(iconId, duration)
-        for i, callback in ipairs(context._callbacks.onSpellCooldown) do
-          callback(iconId, duration)
-        end
       end,
     }    
   }

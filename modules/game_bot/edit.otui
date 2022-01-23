@@ -2,126 +2,9 @@ MainWindow
   id: editWindow
   !text: tr("Config editor & manager")
   @onEscape: self:hide()
-  size: 550 570
+  size: 550 420
   $mobile:
     size: 550 240
-
-  Panel
-    id: manager
-    anchors.top: parent.top
-    anchors.left: parent.left
-    anchors.right: parent.right
-    height: 152
-    
-    Label
-      anchors.top: parent.top
-      anchors.left: parent.left
-      anchors.right: parent.right
-      text-auto-resize: true
-      text-align: center
-      text-wrap: true
-      !text: tr("Config Manager\nYou can use config manager to share configs between different machines, especially smartphones. After you configure your config, you can upload it, then you'll get unique hash code which you can use on diffent machinge (for eg. mobile phone) to download it.")
-      
-    HorizontalSeparator
-      anchors.top: prev.bottom
-      anchors.left: parent.left
-      anchors.right: parent.right
-      margin-top: 3
-      height: 2
-      
-    Panel
-      id: upload
-      anchors.top: prev.bottom
-      anchors.left: parent.left
-      anchors.right: parent.horizontalCenter
-      anchors.bottom: parent.bottom
-      margin-top: 3
-
-      Label
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        text-auto-resize: true
-        text-align: center
-        text-wrap: true
-        !text: tr("Upload config")
-
-      Label
-        anchors.top: prev.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        margin-top: 7
-        text-auto-resize: true
-        text-align: center
-        text-wrap: true
-        !text: tr("Select config to upload")
-
-      ComboBox
-        id: config
-        anchors.top: prev.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        margin-top: 4
-        margin-left: 20
-        margin-right: 20
-        text-offset: 3 0
-        
-      Button
-        id: submit
-        anchors.top: prev.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        !text: tr('Upload config')
-        margin-top: 4
-        margin-left: 40
-        margin-right: 40
-        @onClick: modules.game_bot.uploadConfig()
-        
-    Panel
-      id: download
-      anchors.top: prev.top
-      anchors.left: parent.horizontalCenter
-      anchors.right: parent.right      
-      anchors.bottom: parent.bottom
-
-      Label
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        text-auto-resize: true
-        text-align: center
-        text-wrap: true
-        !text: tr("Download config")
-
-      Label
-        anchors.top: prev.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        margin-top: 7
-        text-auto-resize: true
-        text-align: center
-        text-wrap: true
-        !text: tr("Enter config hash code")
-
-      TextEdit
-        id: config
-        anchors.top: prev.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        margin-top: 4
-        margin-left: 20
-        margin-right: 20
-        
-      Button
-        id: submit
-        anchors.top: prev.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        !text: tr('Download config')
-        margin-top: 4
-        margin-left: 40
-        margin-right: 40
-        @onClick: modules.game_bot.downloadConfig()        
         
   HorizontalSeparator
     anchors.top: prev.bottom
@@ -146,7 +29,7 @@ MainWindow
       text-auto-resize: true
       text-align: center
       text-wrap: true
-      !text: tr("Bot configs are stored in:")
+      !text: tr("Macro configs are stored in:")
 
     TextEdit
       anchors.horizontalCenter: parent.horizontalCenter
@@ -227,7 +110,7 @@ MainWindow
     anchors.left: prev.right
     margin-left: 5 
     width: 80
-    @onClick: g_platform.openUrl("http://otclient.ovh/bot.php?scripts")
+    @onClick: g_platform.openUrl("https://otland.net/threads/scripts-macros-for-kondras-otclientv8-bot.267394/")
 
   Button
     !text: tr('Forum')
@@ -235,7 +118,7 @@ MainWindow
     anchors.left: prev.right
     margin-left: 5 
     width: 80
-    @onClick: g_platform.openUrl("http://otclient.ovh/bot.php?forum")
+    @onClick: g_platform.openUrl("https://otland.net/forums/otclient.494/")
 
   Button
     !text: tr('Discord')
@@ -243,7 +126,7 @@ MainWindow
     anchors.left: prev.right
     margin-left: 5 
     width: 80
-    @onClick: g_platform.openUrl("http://otclient.ovh/bot.php?discord")
+    @onClick: g_platform.openUrl("https://discordapp.com/invite/BxDKKGPH")
   
   Button
     id: cancelButton

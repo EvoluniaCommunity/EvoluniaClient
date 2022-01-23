@@ -22,12 +22,12 @@ BotTabBarButton < TabBarButton
 
 MiniWindow
   id: botWindow
-  !text: tr('Bot')
+  !text: tr('Macros')
   height: 600
   icon: /images/topbuttons/bot
   @onClose: modules.game_bot.onMiniWindowClose()
   &save: true
-  &autoOpen: 10
+  &autoOpen: false
 
   MiniWindowContents   
     ComboBox

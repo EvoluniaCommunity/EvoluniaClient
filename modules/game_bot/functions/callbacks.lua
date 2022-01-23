@@ -23,7 +23,7 @@ context.callback = function(callbackType, callback)
       local start = g_clock.realMillis()
       callback(...)
       local executionTime = g_clock.realMillis() - start
-      if executionTime > 100 then
+      if executionTime > 200 then
         context.warning("Slow " .. callbackType .. " (" .. executionTime .. "ms): " .. desc)
       end
       context._currentExecution = prevExecution
@@ -68,11 +68,6 @@ end
 -- onTextMessage(callback) -- callback = function(mode, text)
 context.onTextMessage = function(callback) 
   return context.callback("onTextMessage", callback)
-end
-
--- onLoginAdvice(callback) -- callback = function(message)
-context.onLoginAdvice = function(callback) 
-  return context.callback("onLoginAdvice", callback)
 end
 
 -- onAddThing(callback) -- callback = function(tile, thing)
@@ -125,7 +120,7 @@ context.onContainerClose = function(callback)
   return context.callback("onContainerClose", callback)
 end
 
--- onContainerUpdateItem -- callback = function(container, slot, item, oldItem)
+-- onContainerUpdateItem -- callback = function(container, slot, item)
 context.onContainerUpdateItem = function(callback)
   return context.callback("onContainerUpdateItem", callback)
 end
@@ -170,60 +165,6 @@ context.onTurn = function(callback)
   return context.callback("onTurn", callback)
 end
 
--- onWalk -- callback = function(creature, oldPos, newPos)
-context.onWalk = function(callback)
-  return context.callback("onWalk", callback)
-end
-
--- onImbuementWindow -- callback = function(itemId, slots, activeSlots, imbuements, needItems)
-context.onImbuementWindow = function(callback)
-  return context.callback("onImbuementWindow", callback)
-end
-
--- onModalDialog -- callback = function(id, title, message, buttons, enterButton, escapeButton, choices, priority) -- priority is unused, ignore it
-context.onModalDialog = function(callback)
-  return context.callback("onModalDialog", callback)
-end
-
--- onAttackingCreatureChange -- callback = function(creature, oldCreature)
-context.onAttackingCreatureChange = function(callback)
-  return context.callback("onAttackingCreatureChange", callback)
-end
-
--- onManaChange -- callback = function(player, mana, maxMana, oldMana, oldMaxMana)
-context.onManaChange = function(callback)
-  return context.callback("onManaChange", callback)
-end
-
--- onAddItem - callback = function(container, slot, item)
-context.onAddItem = function(callback)
-  return context.callback("onAddItem", callback)
-end
-
--- onRemoveItem - callback = function(container, slot, item)
-context.onRemoveItem = function(callback)
-  return context.callback("onRemoveItem", callback)
-end
-
--- onStatesChange - callback = function(states, oldStates)
-context.onStatesChange = function(callback)
-  return context.callback("onStatesChange", callback)
-end
-
--- onGameEditText - callback = function(id, itemId, maxLength, text, writer, time)
-context.onGameEditText = function(callback)
-  return context.callback("onGameEditText", callback)
-end
-
--- onSpellCooldown - callback = function(iconId, duration)
-context.onSpellCooldown = function(callback)
-  return context.callback("onSpellCooldown", callback)
-end
-
--- onGroupSpellCooldown - callback = function(iconId, duration)
-context.onGroupSpellCooldown = function(callback)
-  return context.callback("onGroupSpellCooldown", callback)
-end
 
 -- CUSTOM CALLBACKS
 

@@ -124,7 +124,7 @@ context.usewith = function(thing, target, subtype)
   if type(thing) == 'number' then  
     return g_game.useInventoryItemWith(thing, target, subtype)
   else
-    return g_game.useWith(thing, target, subtype)
+    return g_game.useWith(item, target, subtype)
   end
 end
 context.useWith = context.usewith
@@ -159,7 +159,6 @@ context.cancelFollow = g_game.cancelFollow
 context.cancelAttackAndFollow = g_game.cancelAttackAndFollow
 
 context.logout = g_game.forceLogout
-context.safeLogout = g_game.safeLogout
 context.ping = g_game.getPing
 
 modules.game_cooldown.isGroupCooldownIconActive(id)

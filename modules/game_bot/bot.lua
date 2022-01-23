@@ -35,7 +35,7 @@ function init()
   
   initCallbacks()  
   
-  botButton = modules.client_topmenu.addRightGameToggleButton('botButton', tr('Bot'), '/images/topbuttons/bot', toggle, false, 99999)
+  botButton = modules.client_topmenu.addRightGameToggleButton('botButton', tr('Macros'), '/images/topbuttons/bot', toggle, false, 99999)
   botButton:setOn(false)
   botButton:hide()
 
@@ -101,13 +101,6 @@ function clear()
   for i, widget in pairs(modules.game_interface.gameMapPanel:getChildren()) do
     if widget.botWidget then
       widget:destroy()
-    end
-  end
-  for _, widget in pairs({modules.game_interface.getRightPanel(), modules.game_interface.getLeftPanel()}) do
-    for i, child in pairs(widget:getChildren()) do
-      if child.botWidget then
-        child:destroy()
-      end
     end
   end
   
@@ -273,11 +266,6 @@ end
 
 function edit()
   local configs = g_resources.listDirectoryFiles("/bot", false, false)  
-  editWindow.manager.upload.config:clearOptions()  
-  for i=1,#configs do 
-    editWindow.manager.upload.config:addOption(configs[i])
-  end
-  editWindow.manager.download.config:setText("")
   
   editWindow:show()
   editWindow:focus()
@@ -292,82 +280,34 @@ function createDefaultConfigs()
       if not g_resources.directoryExists("/bot/" .. config_name) then
         return onError("Can't create /bot/" .. config_name .. " directory in " .. g_resources.getWriteDir())
       end
+    end
 
-      local defaultConfigFiles = g_resources.listDirectoryFiles("default_configs/" .. config_name, true, false)
-      for i, file in ipairs(defaultConfigFiles) do
-        local baseName = file:split("/")
-        baseName = baseName[#baseName]
-        if g_resources.directoryExists(file) then
-          g_resources.makeDir("/bot/" .. config_name .. "/" .. baseName)
-          if not g_resources.directoryExists("/bot/" .. config_name .. "/" .. baseName) then
-            return onError("Can't create /bot/" .. config_name  .. "/" .. baseName .. " directory in " .. g_resources.getWriteDir())
-          end
-          local defaultConfigFiles2 = g_resources.listDirectoryFiles("default_configs/" .. config_name .. "/" .. baseName, true, false)
-          for i, file in ipairs(defaultConfigFiles2) do
-            local baseName2 = file:split("/")
-            baseName2 = baseName2[#baseName2]
-            local contents = g_resources.fileExists(file) and g_resources.readFileContents(file) or ""
-            if contents:len() > 0 then
-              g_resources.writeFileContents("/bot/" .. config_name .. "/" .. baseName .. "/" .. baseName2, contents)
-            end  
-          end
-        else
+    local defaultConfigFiles = g_resources.listDirectoryFiles("default_configs/" .. config_name, true, false)
+    for i, file in ipairs(defaultConfigFiles) do
+      local baseName = file:split("/")
+      baseName = baseName[#baseName]
+      if g_resources.directoryExists(file) then
+        g_resources.makeDir("/bot/" .. config_name .. "/" .. baseName)
+        if not g_resources.directoryExists("/bot/" .. config_name .. "/" .. baseName) then
+          return onError("Can't create /bot/" .. config_name  .. "/" .. baseName .. " directory in " .. g_resources.getWriteDir())
+        end
+        local defaultConfigFiles2 = g_resources.listDirectoryFiles("default_configs/" .. config_name .. "/" .. baseName, true, false)
+        for i, file in ipairs(defaultConfigFiles2) do
+          local baseName2 = file:split("/")
+          baseName2 = baseName2[#baseName2]
           local contents = g_resources.fileExists(file) and g_resources.readFileContents(file) or ""
           if contents:len() > 0 then
-            g_resources.writeFileContents("/bot/" .. config_name .. "/" .. baseName, contents)
-          end
+            g_resources.writeFileContents("/bot/" .. config_name .. "/" .. baseName .. "/" .. baseName2, contents)
+          end  
+        end
+      else
+        local contents = g_resources.fileExists(file) and g_resources.readFileContents(file) or ""
+        if contents:len() > 0 then
+          g_resources.writeFileContents("/bot/" .. config_name .. "/" .. baseName, contents)
         end
       end
     end
   end
-end
-
-function uploadConfig()
-  local config = editWindow.manager.upload.config:getCurrentOption().text
-  local archive = compressConfig(config)
-  if not archive then
-      return displayErrorBox(tr("Config upload failed"), tr("Config %s is invalid (can't be compressed)", config))
-  end
-  if archive:len() > 1024 * 1024 then
-      return displayErrorBox(tr("Config upload failed"), tr("Config %s is too big, maximum size is 1024KB. Now it has %s KB.", config, math.floor(archive:len() / 1024)))
-  end
-  
-  local infoBox = displayInfoBox(tr("Uploading config"), tr("Uploading config %s. Please wait.", config))
-  
-  HTTP.postJSON(configManagerUrl .. "?config=" .. config:gsub("%s+", "_"), archive, function(data, err)
-    if infoBox then
-      infoBox:destroy()
-    end
-    if err or data["error"] then      
-      return displayErrorBox(tr("Config upload failed"), tr("Error while upload config %s:\n%s", config, err or data["error"]))
-    end
-    displayInfoBox(tr("Succesful config upload"), tr("Config %s has been uploaded.\n%s", config, data["message"]))
-  end)  
-end
-
-function downloadConfig()
-  local hash = editWindow.manager.download.config:getText()
-  if hash:len() == 0 then
-      return displayErrorBox(tr("Config download error"), tr("Enter correct config hash"))  
-  end
-  local infoBox = displayInfoBox(tr("Downloading config"), tr("Downloading config with hash %s. Please wait.", hash))
-  HTTP.download(configManagerUrl .. "?hash=" .. hash, hash .. ".zip", function(path, checksum, err)
-    if infoBox then
-      infoBox:destroy()
-    end
-    if err then
-      return displayErrorBox(tr("Config download error"), tr("Config with hash %s cannot be downloaded", hash))      
-    end
-    modules.client_textedit.show("", {
-      title="Enter name for downloaded config",
-      description="Config with hash " .. hash .. " has been downloaded. Enter name for new config.\nWarning: if config with same name already exist, it will be overwritten!",
-      width=500
-    }, function(configName)
-      decompressConfig(configName, "/downloads/" .. path)
-      refresh()
-      edit()
-    end)
-  end)
 end
 
 function compressConfig(configName)
@@ -447,7 +387,7 @@ function check()
     return
   end
 
-  checkEvent = scheduleEvent(check, 10)
+  checkEvent = scheduleEvent(check, 150)
   
   local status, result = pcall(function() 
     return botExecutor.script() 
@@ -475,21 +415,12 @@ function initCallbacks()
   connect(g_game, { 
     onTalk = botOnTalk,
     onTextMessage = botOnTextMessage,
-    onLoginAdvice = botOnLoginAdvice,
     onUse = botOnUse,
     onUseWith = botOnUseWith,
     onChannelList = botChannelList,
     onOpenChannel = botOpenChannel,
     onCloseChannel = botCloseChannel,
-    onChannelEvent = botChannelEvent,
-    onImbuementWindow = botImbuementWindow,
-    onModalDialog = botModalDialog,
-    onAttackingCreatureChange = botAttackingCreatureChange,
-    onAddItem = botContainerAddItem,
-    onRemoveItem = botContainerRemoveItem,
-    onGameEditText = botGameEditText,
-    onSpellCooldown = botSpellCooldown,
-    onSpellGroupCooldown = botGroupSpellCooldown
+    onChannelEvent = botChannelEvent
   })
   
   connect(Tile, {
@@ -502,25 +433,18 @@ function initCallbacks()
     onDisappear = botCreatureDisappear,
     onPositionChange = botCreaturePositionChange,
     onHealthPercentChange = botCraetureHealthPercentChange,
-    onTurn = botCreatureTurn,
-    onWalk = botCreatureWalk,
-  })
+    onTurn = botCreatureTurn
+  })  
   
   connect(LocalPlayer, {
     onPositionChange = botCreaturePositionChange,
-    onHealthPercentChange = botCraetureHealthPercentChange,
-    onTurn = botCreatureTurn,
-    onWalk = botCreatureWalk,
-    onManaChange = botManaChange,
-    onStatesChange = botStatesChange
+    onHealthPercentChange = botCraetureHealthPercentChange
   })
   
   connect(Container, {
     onOpen = botContainerOpen,
     onClose = botContainerClose,
-    onUpdateItem = botContainerUpdateItem,
-    onAddItem = botContainerAddItem,
-    onRemoveItem = botContainerRemoveItem,
+    onUpdateItem = botContainerUpdateItem 
   })
   
   connect(g_map, { 
@@ -540,19 +464,12 @@ function terminateCallbacks()
   disconnect(g_game, { 
     onTalk = botOnTalk,
     onTextMessage = botOnTextMessage,
-    onLoginAdvice = botOnLoginAdvice,
     onUse = botOnUse,
     onUseWith = botOnUseWith,
     onChannelList = botChannelList,
     onOpenChannel = botOpenChannel,
     onCloseChannel = botCloseChannel,
-    onChannelEvent = botChannelEvent,
-    onImbuementWindow = botImbuementWindow,
-    onModalDialog = botModalDialog,
-    onAttackingCreatureChange = botAttackingCreatureChange,
-    onGameEditText = botGameEditText,
-    onSpellCooldown = botSpellCooldown,
-    onSpellGroupCooldown = botGroupSpellCooldown
+    onChannelEvent = botChannelEvent
   })
   
   disconnect(Tile, {
@@ -565,25 +482,18 @@ function terminateCallbacks()
     onDisappear = botCreatureDisappear,
     onPositionChange = botCreaturePositionChange,
     onHealthPercentChange = botCraetureHealthPercentChange,
-    onTurn = botCreatureTurn,
-    onWalk = botCreatureWalk,
+    onTurn = botCreatureTurn
   })  
   
   disconnect(LocalPlayer, {
     onPositionChange = botCreaturePositionChange,
-    onHealthPercentChange = botCraetureHealthPercentChange,
-    onTurn = botCreatureTurn,
-    onWalk = botCreatureWalk,
-    onManaChange = botManaChange,
-    onStatesChange = botStatesChange
+    onHealthPercentChange = botCraetureHealthPercentChange
   })
   
   disconnect(Container, {
     onOpen = botContainerOpen,
     onClose = botContainerClose,
-    onUpdateItem = botContainerUpdateItem,
-    onAddItem = botContainerAddItem, 
-    onRemoveItem = botContainerRemoveItem
+    onUpdateItem = botContainerUpdateItem 
   })
   
   disconnect(g_map, { 
@@ -626,11 +536,6 @@ end
 function botOnTextMessage(mode, text)
   if botExecutor == nil then return false end
   safeBotCall(function() botExecutor.callbacks.onTextMessage(mode, text) end)
-end
-
-function botOnLoginAdvice(message)
-  if botExecutor == nil then return false end
-  safeBotCall(function() botExecutor.callbacks.onLoginAdvice(message) end)
 end
 
 function botAddThing(tile, thing)
@@ -683,9 +588,9 @@ function botContainerClose(container)
   safeBotCall(function() botExecutor.callbacks.onContainerClose(container) end)
 end
 
-function botContainerUpdateItem(container, slot, item, oldItem)
+function botContainerUpdateItem(container, slot, item)
   if botExecutor == nil then return false end
-  safeBotCall(function() botExecutor.callbacks.onContainerUpdateItem(container, slot, item, oldItem) end)
+  safeBotCall(function() botExecutor.callbacks.onContainerUpdateItem(container, slot, item) end)
 end
 
 function botOnMissle(missle)
@@ -726,59 +631,4 @@ end
 function botCreatureTurn(creature, direction)
   if botExecutor == nil then return false end
   safeBotCall(function() botExecutor.callbacks.onTurn(creature, direction) end)
-end
-
-function botCreatureWalk(creature, oldPos, newPos)
-  if botExecutor == nil then return false end
-  safeBotCall(function() botExecutor.callbacks.onWalk(creature, oldPos, newPos) end)
-end
-
-function botImbuementWindow(itemId, slots, activeSlots, imbuements, needItems)
-  if botExecutor == nil then return false end
-  safeBotCall(function() botExecutor.callbacks.onImbuementWindow(itemId, slots, activeSlots, imbuements, needItems) end)
-end
-
-function botModalDialog(id, title, message, buttons, enterButton, escapeButton, choices, priority)
-  if botExecutor == nil then return false end
-  safeBotCall(function() botExecutor.callbacks.onModalDialog(id, title, message, buttons, enterButton, escapeButton, choices, priority) end)
-end
-
-function botGameEditText(id, itemId, maxLength, text, writer, time)
-  if botExecutor == nil then return false end
-  safeBotCall(function() botExecutor.callbacks.onGameEditText(id, itemId, maxLength, text, writer, time) end)
-end
-
-function botAttackingCreatureChange(creature, oldCreature)
-  if botExecutor == nil then return false end
-  safeBotCall(function() botExecutor.callbacks.onAttackingCreatureChange(creature,oldCreature) end)
-end
-
-function botManaChange(player, mana, maxMana, oldMana, oldMaxMana)
-  if botExecutor == nil then return false end
-  safeBotCall(function() botExecutor.callbacks.onManaChange(player, mana, maxMana, oldMana, oldMaxMana) end)
-end
-
-function botStatesChange(states, oldStates)
-  if botExecutor == nil then return false end
-  safeBotCall(function() botExecutor.callbacks.onStatesChange(states, oldStates) end)
-end
-
-function botContainerAddItem(container, slot, item, oldItem)
-  if botExecutor == nil then return false end
-  safeBotCall(function() botExecutor.callbacks.onAddItem(container, slot, item, oldItem) end)
-end
-
-function botContainerRemoveItem(container, slot, item)
-  if botExecutor == nil then return false end
-  safeBotCall(function() botExecutor.callbacks.onRemoveItem(container, slot, item) end)
-end
-
-function botSpellCooldown(iconId, duration)
-  if botExecutor == nil then return false end
-  safeBotCall(function() botExecutor.callbacks.onSpellCooldown(iconId, duration) end)
-end
-
-function botGroupSpellCooldown(iconId, duration)
-  if botExecutor == nil then return false end
-  safeBotCall(function() botExecutor.callbacks.onGroupSpellCooldown(iconId, duration) end)
 end

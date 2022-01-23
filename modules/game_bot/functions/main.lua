@@ -116,7 +116,7 @@ context.macro = function(timeout, name, hotkey, callback, parent)
       local start = g_clock.realMillis()
       callback(macro)
       local executionTime = g_clock.realMillis() - start
-      if executionTime > 100 then
+      if executionTime > 1100 then
         context.warning("Slow macro (" .. executionTime .. "ms): " .. macro.name .. " - " .. desc)
       end
       context._currentExecution = nil    
@@ -170,7 +170,7 @@ context.hotkey = function(keys, name, callback, parent, single)
       local start = g_clock.realMillis()
       callback()
       local executionTime = g_clock.realMillis() - start
-      if executionTime > 100 then
+      if executionTime > 200 then
         context.warning("Slow hotkey (" .. executionTime .. "ms): " .. hotkeyData.name .. " - " .. desc)
       end
       context._currentExecution = nil
